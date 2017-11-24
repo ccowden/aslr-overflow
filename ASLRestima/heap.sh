@@ -5,7 +5,6 @@ trap "" 15
 
 ulimit -c 0
 
-# LOOP FOREVER
 for run in `jot 50 1`
 do
   printf \\r$run
