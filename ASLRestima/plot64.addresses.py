@@ -7,6 +7,8 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 from matplotlib.font_manager import FontProperties
 
+print "Usage: python plot64.addresses.py decimalData [yLabel] [title]"
+
 # Collect the data from the given file
 with open (sys.argv[1], "r") as data:
   Title=data.readline()
@@ -53,11 +55,19 @@ ax.set_position([box.x0, box.y0 + box.height * 0.1, box.width, box.height * 0.9]
 ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.05), ncol=8)
 
 plt.xticks(())
-plt.yticks(())
+plt.yticks((np.arange(0, 256, 50)))
 
-plt.xlabel('Server Run Number')
-plt.ylabel('hidden() Memory Address')
-plt.title('Memory Address Entropy for %s'%(Title))
+xLabel = 'Server Run Number'
+yLabel = 'hidden() Memory Address'
+title = 'Memory Address Entropy for %s'%(Title)
+
+if (len(sys.argv) == 4):
+    yLabel = sys.argv[2]
+    title = sys.argv[3]
+
+plt.xlabel(xLabel)
+plt.ylabel(yLabel)
+plt.title(title)
 
 saveLocation = './' + sys.argv[1] + '.png'
 
