@@ -1,9 +1,10 @@
 CC = cc
 CFLAGS = -Wall -fPIE -pie -fno-stack-protector -O0
 
-all: ASLRestima
+all: ASLRestima heap_entropy
 
 ASLRestima: ASLRestima.c
+heap_entropy: heap_entropy.c
 
 clean: 
-	rm -f *.o ASLRestima
+	rm -f *.o ASLRestima heap_entropy
