@@ -60,7 +60,7 @@ plt.title('Memory Address Entropy for %s - Flattened'%(Title))
 
 fileName = sys.argv[1].replace("addresses", "flattened");
 
-saveLocation = '/' + fileName + '.png'
+saveLocation = './' + fileName.split('.')[0] + '_flattened.png'
 
 plt.savefig(saveLocation, bbox_inches='tight')
 

@@ -59,7 +59,7 @@ plt.xlabel('Server Run Number')
 plt.ylabel('hidden() Memory Address')
 plt.title('Memory Address Entropy for %s'%(Title))
 
-saveLocation = '/' + sys.argv[1] + '.png'
+saveLocation = './' + sys.argv[1] + '.png'
 
 plt.savefig(saveLocation, bbox_inches='tight')
 
