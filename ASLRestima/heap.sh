@@ -5,6 +5,8 @@ trap "" 15
 
 ulimit -c 0
 
+> $1
+
 for run in `jot 50 1`
 do
   printf \\r$run
