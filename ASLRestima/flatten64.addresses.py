@@ -53,16 +53,16 @@ ax.set_position([box.x0, box.y0 + box.height * 0.1, box.width, box.height * 0.9]
 
 ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.05), ncol=4)
 
-plt.xticks(())
-plt.yticks((np.arange(0, 256, 50)))
+plt.xticks(np.arange(0, max(ADDRESSx), 100))
+plt.yticks(np.arange(0, 256, 50))
 
 xLabel = 'Server Run Number'
 yLabel = 'hidden() Memory Address'
 title = 'Memory Address Entropy for Flattened %s'%(Title)
 
 if (len(sys.argv) == 4):
-    yLabel = sys.argv[2]
-    title = sys.argv[3]
+  yLabel = sys.argv[2]
+  title = sys.argv[3]
 
 plt.xlabel(xLabel)
 plt.ylabel(yLabel)
