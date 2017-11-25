@@ -26,7 +26,7 @@ int main() {
 
      fp = fopen("textstack.log", "a");                                               
                                                                                            
-     stackaddr = &stackvar;                                                                
+     stackaddr = (unsigned long long) &stackvar;                                                                
      textaddr  = (unsigned long long) hidden;
   
      delta_addr = stackaddr - textaddr ;
