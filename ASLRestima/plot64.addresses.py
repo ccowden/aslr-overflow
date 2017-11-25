@@ -69,7 +69,7 @@ plt.xlabel(xLabel)
 plt.ylabel(yLabel)
 plt.title(title)
 
-saveLocation = './' + sys.argv[1] + '.png'
+saveLocation = './' + sys.argv[1].split('.')[0] + '.png'
 
 plt.savefig(saveLocation, bbox_inches='tight')
 
