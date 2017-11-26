@@ -9,13 +9,10 @@ char libc_name[] = "libc-";
 
 int main() {
 
-     FILE *fpbin;
      char binaddr[65] = {0};                                                              
      unsigned long long masked;                                                            
      unsigned long long entropy_addr;
      
-     fpbin = fopen("libsobin.log", "a");                                               
-
      strcat(libc_name, gnu_get_libc_version());
      strcat(libc_name, ".so");
 
@@ -34,8 +31,7 @@ int main() {
          strcat(binaddr, ((entropy_addr & masked) == masked) ? "1" : "0");                   
      }                                                                                     
      binaddr[65] = '\0';                                                                  
-     fprintf(fpbin, "%s\n", binaddr);                                                   
+     printf("%s\n", binaddr);                                                   
                                                                                            
-     fclose(fpbin);                                                                      
      return 0;                                                                             
 } 
