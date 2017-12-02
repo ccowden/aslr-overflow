@@ -11,5 +11,4 @@ for run in `jot 800 1`
 do
   printf \\r$run
   timeout -s 9 60 ./vdso_entropy >> $1
-  sleep 2
 done

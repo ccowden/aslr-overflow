@@ -7,9 +7,8 @@ ulimit -c 0
 
 > $1
 
-for run in `jot 50 1`
+for run in `jot 800 1`
 do
   printf \\r$run
   timeout -s 9 60 ./heap_entropy >> $1
-  sleep 2
 done
