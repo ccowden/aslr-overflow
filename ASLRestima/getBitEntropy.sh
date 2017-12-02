@@ -29,7 +29,7 @@ do
         printf ${line:${startPos[$i]}:${lengths[$i]}}
     done < "$i""Log.txt" > temp.txt
 
-    "Ent/ent" temp.txt -c > "$i""Entropy.txt"
+    "Ent/ent" temp.txt -c | tee "$i""Entropy.txt"
 
     echo "Results saved in "$i"Entropy.txt"
 
