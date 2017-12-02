@@ -44,7 +44,7 @@ ax.xaxis.set_major_formatter(FormatStrFormatter('%x'))
 plt.xticks()
 
 xLabel = 'Memory '
-yLabel = 'Server Run Number'
+yLabel = 'Run Number'
 title = 'Memory Address Entropy for %s'%(Title)
 
 if (len(sys.argv) == 4):
