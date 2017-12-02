@@ -45,7 +45,7 @@ plt.xticks()
 
 xLabel = 'Memory '
 yLabel = 'Run Number'
-title = 'Memory Address Entropy for %s'%(Title)
+title = 'Address Distribution for %s'%(Title)
 
 if (len(sys.argv) == 4):
   yLabel = sys.argv[2]
