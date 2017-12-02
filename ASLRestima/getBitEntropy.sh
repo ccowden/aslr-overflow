@@ -23,7 +23,7 @@ do
 
     #put randomized bits into a temp file
     #also remove new lines by writing to a temp file
-    echo "Evaluating randomness from bits ${startPos[$i]}:${lengths[$i]} for $i"
+    echo "Evaluating ${lengths[$i]} randomized bits starting at bit ${startPos[$i]} for $i"
     while read line 
     do
         printf ${line:${startPos[$i]}:${lengths[$i]}}
