@@ -1,25 +1,40 @@
 #!/bin/bash
 
-echo "Usage: ./getBitEntropy.sh rawLogFile outputFile"
-
 #make sure the Ent code is built
 echo "Building ENT"
 cd Ent
 make > /dev/null
 cd ..
 
-#put randomized bits (excludes first 16, last 12 bits) into a temp file
-#also remove new lines by writing to a temp file
-echo "Reformatting input file"
-while read line
+########## CREATING LOG.TXT FILES ####################
+declare -a types=("heap" "text" "stack" "mmap" "vdso" "libso")
+declare -A startPos=( ["heap"]=16 ["text"]=16 ["stack"]=24 ["mmap"]=17 ["vdso"]=24 ["libso"]=17 )
+declare -A lengths=( ["heap"]=30 ["text"]=30 ["stack"]=30 ["mmap"]=29 ["vdso"]=22 ["libso"]=29 ) 
+
+
+########## RUNNING ENT SCRIPT ########################
+for i in "${types[@]}"
 do
-    printf ${line:16:36}
-done < $1 > temp.txt
+    if [ ! -f "$i"Log.txt ]; then
+        echo "$i""Log.txt not found. Running $i.sh to create it."
+        ./$i.sh "$i"Log.txt
+        echo ""
+    fi
 
-echo "Executing ent code"
-"Ent/ent" temp.txt -c > $2
+    #put randomized bits into a temp file
+    #also remove new lines by writing to a temp file
+    echo "Evaluating randomness from bits ${startPos[$i]}:${lengths[$i]} for $i"
+    while read line 
+    do
+        printf ${line:${startPos[$i]}:${lengths[$i]}}
+    done < "$i""Log.txt" > temp.txt
 
-echo "Results saved in $2"
+    "Ent/ent" temp.txt -c > "$i""Entropy.txt"
 
-#clean up
-rm temp.txt
+    echo "Results saved in "$i"Entropy.txt"
+
+    #clean up
+    rm temp.txt
+done
+
+
