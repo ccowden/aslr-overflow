@@ -1,0 +1,6 @@
+Distribution plot Generation:
+  1. export STACKBIN="./stackbin.log"
+  2. ./stack.sh $STACKBIN
+  3. export STACKDECFULL="./stackdecfull.log"
+  4. ./binaryToDecFull.sh $STACKBIN >> $STACKDECFULL
+  5. python distrib64.addresses.py $STACKDECFULL
