@@ -74,4 +74,4 @@ saveLocation = './' + fileName.split('.')[0] + '_flattened.png'
 
 plt.savefig(saveLocation, bbox_inches='tight')
 
-plt.show()
+#plt.show()
