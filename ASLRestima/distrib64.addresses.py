@@ -55,8 +55,8 @@ plt.xlabel(xLabel)
 plt.ylabel(yLabel)
 plt.title(title)
 
-saveLocation = './' + sys.argv[1].split('.')[0] + '.png'
+saveLocation = './' + sys.argv[1].split('.')[0] + '_distribution.png'
 
 plt.savefig(saveLocation, bbox_inches='tight')
 
-plt.show()
+#plt.show()
