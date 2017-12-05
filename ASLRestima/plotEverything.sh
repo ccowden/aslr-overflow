@@ -24,6 +24,7 @@ cd Ent
 make > /dev/null
 cd ..
 
+echo "*************************************"
 ######################## ITERATE THROUGH MEM SEGMENTS ########################
 for i in "${types[@]}"
 do
@@ -42,16 +43,16 @@ do
 
     ########## BUILD LOG/DECIMAL/FULL FILES ##########
     if [ ! -f "$LOGFILE" ]; then
-        echo "$LOGFILE not found. Running $BASHSCRIPT to create it."
-        ./$BASHSCRIPT $LOGFILE
+        echo "$i: $LOGFILE not found. Running $BASHSCRIPT to create it."
+        ./$BASHSCRIPT $LOGFILE > /dev/null
     fi
     if [ ! -f "$DECIMALFILE" ]; then
-        echo "$DECIMALFILE not found. Running binaryToDec64.sh to create it."
+        echo "$i: $DECIMALFILE not found. Running binaryToDec64.sh to create it."
         ./binaryToDec64.sh "$LOGFILE" > "$DECIMALFILE"
     fi
 
     if [ ! -f "$DECFULLFILE" ]; then
-        echo "$DECFULLFILE not found. Running binaryToDecFull.sh to create it."
+        echo "$i: $DECFULLFILE not found. Running binaryToDecFull.sh to create it."
         ./binaryToDecFull.sh $LOGFILE > $DECFULLFILE
     fi
 
@@ -59,18 +60,21 @@ do
     python plot64.addresses.py "$DECIMALFILE" "$YAXIS" "$TITLE"
     python flatten64.addresses.py "$DECIMALFILE" "$YAXIS" "$FLATTITLE"
     python distrib64.addresses.py "$DECFULLFILE" "COUNT" "$DISTRIBTITLE"
+    echo "$i: Finished creating plots."
 
     ########## RUN THE ENT STATISTICS ##########
-    echo "Evaluating $BITLENGTH randomized bits starting at bit $FIRSTBIT for $i"
+    echo "$i: Finished evaluating entropy for $BITLENGTH bits starting at bit $FIRSTBIT."
     while read line 
     do
         printf ${line:$FIRSTBIT:$BITLENGTH}
     done < $LOGFILE > temp.txt
 
-    "Ent/ent" temp.txt -c | tee $ENTFILE
+    "Ent/ent" temp.txt -ct > $ENTFILE
 
-    echo "Results saved in $ENTFILE"
+    echo "$i: Finished measuring entropy statistics."
 
     ########## CLEAN UP ##########
     rm temp.txt
+
+    echo "$i: Finished running script."
 done
