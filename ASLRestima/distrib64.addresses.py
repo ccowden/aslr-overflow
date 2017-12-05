@@ -9,7 +9,8 @@ from matplotlib.ticker import FormatStrFormatter
 from matplotlib.font_manager import FontProperties
 from scipy.stats import norm
 
-print "Usage: python distrib64.addresses.py decimalData [ylabel] [title]"
+if len(sys.argv) != 4:
+    print "Usage: python distrib64.addresses.py decimalData [ylabel] [title]"
 
 # Collect the data from the given file
 with open (sys.argv[1], "r") as data:

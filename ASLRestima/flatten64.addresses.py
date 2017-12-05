@@ -7,7 +7,9 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 from matplotlib.font_manager import FontProperties
 
-print "Usage: python flatten64.addresses.py decimalData [yLabel] [title]"
+if len(sys.argv) != 4:
+    print "Usage: python flatten64.addresses.py decimalData [yLabel] [title]"
+    print len(sys.argv)
 
 # Collect the data from the given file
 with open (sys.argv[1], "r") as data:
