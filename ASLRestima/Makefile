@@ -14,3 +14,6 @@ entropy64: entropy64.c
 
 clean: 
 	rm -f *.o ASLRestima text_entropy stack_entropy heap_entropy mmap_entropy libso_entropy vdso_entropy entropy64
+
+superclean:
+	rm -f *.o *.png *.txt ASLRestima text_entropy stack_entropy heap_entropy mmap_entropy libso_entropy vdso_entropy entropy64
