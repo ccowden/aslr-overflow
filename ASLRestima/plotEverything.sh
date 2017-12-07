@@ -6,13 +6,19 @@ declare -A capitalTypes=( ["heap"]="Heap" ["text"]="Text" ["stack"]="Stack" ["mm
 declare -A startPos=( ["heap"]=16 ["text"]=16 ["stack"]=24 ["mmap"]=17 ["vdso"]=24 ["libso"]=17 )
 declare -A lengths=( ["heap"]=30 ["text"]=30 ["stack"]=30 ["mmap"]=29 ["vdso"]=22 ["libso"]=29 ) 
 
-echo "Usage: ./plotEverything.sh [OperatingSystem]"
+echo "Usage: ./plotEverything.sh [OperatingSystem] [numberOfBins]"
 
 ######################## ACCEPT ARGUMENTS ########################
-if [ $# -eq 1 ]; then
-    OPSYSTEM=$1
-else
+if [ -z "$1" ]; then
     OPSYSTEM="Debian"
+else
+    OPSYSTEM=$1
+fi
+
+if [ -z "$2" ]; then
+    NUMBEROFBINS="20"
+else
+    NUMBEROFBINS=$2
 fi
 
 ######################## BUILD WHAT IS REQUIRED ########################
@@ -59,7 +65,7 @@ do
     ########## EXECUTE PYTHON SCRIPTS FOR PLOTTING ##########
     python plot64.addresses.py "$DECIMALFILE" "$YAXIS" "$TITLE"
     python flatten64.addresses.py "$DECIMALFILE" "$YAXIS" "$FLATTITLE"
-    python distrib64.addresses.py "$DECFULLFILE" "COUNT" "$DISTRIBTITLE"
+    python distrib64.addresses.py "$DECFULLFILE" "$NUMBEROFBINS" "COUNT" "$DISTRIBTITLE"
     echo "$i: Finished creating plots."
 
     ########## RUN THE ENT STATISTICS ##########
