@@ -7,57 +7,76 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 from matplotlib.ticker import FormatStrFormatter
 from matplotlib.font_manager import FontProperties
-from scipy.stats import norm
+from scipy.stats import chisquare
 
-if len(sys.argv) != 4:
-    print "Usage: python distrib64.addresses.py decimalData [ylabel] [title]"
+def CreateHistogram(filename, numBins = 10, yLabel="Run Number", title=""):
+    # Collect the data from the given file
+    with open (filename, "r") as data:
+        Title=data.readline()
+        ADDRESS=np.array(map(int, data.readline().split(',')))
 
-# Collect the data from the given file
-with open (sys.argv[1], "r") as data:
-  Title=data.readline()
-  ADDRESS=np.array(map(int, data.readline().split(',')))
+    Title = Title.title()
+    Title = Title.replace("bsd", "BSD")
+    Title = Title.replace(".", "")
+    Title = Title.replace(".", "")
+    Title = Title.replace("64", " 64")
+    Title = Title.replace("32", " 32")
 
-ADDRESSy = np.array(range(1, len(ADDRESS)+1))
+    # Plot The Memory Addresses
 
-Title = Title.title()
-Title = Title.replace("bsd", "BSD")
-Title = Title.replace(".", "")
-Title = Title.replace(".", "")
-Title = Title.replace("64", " 64")
-Title = Title.replace("32", " 32")
+    plt.figure(num=None, figsize=(5.5, 4), dpi=80, facecolor='w', edgecolor='k')
 
-# Plot The Memory Addresses
+    ax = plt.subplot(111)
 
-plt.figure(num=None, figsize=(5.5, 4), dpi=80, facecolor='w', edgecolor='k')
+    (n, bins, patches) = plt.hist(ADDRESS, bins=numBins)
+    (chisq, p) = chisquare(n)
 
-ax = plt.subplot(111)
+    # Adjust the subplot dimensions to fit the legend
 
-plt.hist(ADDRESS)
+    box = ax.get_position()
+    ax.set_position([box.x0, box.y0 + box.height * 0.1, box.width, box.height * 0.9])
 
-# Adjust the subplot dimensions to fit the legend
+    ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.05), ncol=8)
 
-box = ax.get_position()
-ax.set_position([box.x0, box.y0 + box.height * 0.1, box.width, box.height * 0.9])
+    ax.xaxis.set_major_formatter(FormatStrFormatter('%x'))
+    plt.xticks()
 
-ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.05), ncol=8)
+    xLabel = 'Memory '
+    if title == "":
+        title = 'Address Distribution for %s'%(Title)
 
-ax.xaxis.set_major_formatter(FormatStrFormatter('%x'))
-plt.xticks()
+    plt.xlabel(xLabel)
+    plt.ylabel(yLabel)
+    plt.title(title)
 
-xLabel = 'Memory '
-yLabel = 'Run Number'
-title = 'Address Distribution for %s'%(Title)
+    saveLocation = './' + filename.split('.')[0] + '_distribution.png'
 
-if (len(sys.argv) == 4):
-  yLabel = sys.argv[2]
-  title = sys.argv[3]
+    plt.savefig(saveLocation, bbox_inches='tight')
 
-plt.xlabel(xLabel)
-plt.ylabel(yLabel)
-plt.title(title)
+    #plt.show()
 
-saveLocation = './' + sys.argv[1].split('.')[0] + '_distribution.png'
+    # return the count for each bin
+    return n
 
-plt.savefig(saveLocation, bbox_inches='tight')
+def Chi2GOF(filename, distribution):
+    (chisq, p) = chisquare(distribution)
+    saveLocation = './' + filename.split('.')[0] + '_chisq.txt'
+    f = open(saveLocation, "w")
+    f.write('{},'.format(chisq))
+    f.write('{}'.format(p))
+    f.close()
 
-#plt.show()
+if __name__ == "__main__":
+    if len(sys.argv) == 5:
+        distrib = CreateHistogram(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4])
+        Chi2GOF(sys.argv[1], distrib)
+    elif len(sys.argv) == 3:
+        distrib = CreateHistogram(sys.argv[1], sys.argv[2])
+        Chi2GOF(sys.argv[1], distrib)
+    elif len(sys.argv) == 2:
+        distrib = CreateHistogram(sys.argv[1])
+        Chi2GOF(sys.argv[1], distrib)
+    else:
+        print "Usage: python distrib64.addresses.py decimalData.txt numBins [ylabel] [title]"
+
+    
