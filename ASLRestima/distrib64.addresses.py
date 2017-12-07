@@ -62,8 +62,15 @@ def Chi2GOF(filename, distribution):
     (chisq, p) = chisquare(distribution)
     saveLocation = './' + filename.split('.')[0] + '_chisq.txt'
     f = open(saveLocation, "w")
-    f.write('{},'.format(chisq))
-    f.write('{}'.format(p))
+    f.write('{}\n'.format(distribution))
+    f.write("H0: The data is consistent with an equal/constant distribution\n")
+    f.write("Ha: The data is inconsistent with an equal/constant distribution\n")
+    f.write('Chisq: {},'.format(chisq))
+    f.write('PValue: {}\n'.format(p))
+    if ((1-p) > .05):
+    	f.write("With an alpha of .05, we reject the null hypothesis.\nIt is unlikely that the data comes from a truly random distribution.\n")
+    else:
+        f.write("With an alpha of .05, we fail to reject the null hypothesis.\nWe cannot say with certainty whether or not it comes from a truly random distribution.\n")
     f.close()
 
 if __name__ == "__main__":
