@@ -9,7 +9,7 @@ from matplotlib.ticker import FormatStrFormatter
 from matplotlib.font_manager import FontProperties
 from scipy.stats import chisquare
 
-def CreateHistogram(filename, numBins = 10, yLabel="Run Number", title=""):
+def CreateHistogram(filename, numBins = 20, yLabel="Run Number", title=""):
     # Collect the data from the given file
     with open (filename, "r") as data:
         Title=data.readline()
@@ -29,7 +29,6 @@ def CreateHistogram(filename, numBins = 10, yLabel="Run Number", title=""):
     ax = plt.subplot(111)
 
     (n, bins, patches) = plt.hist(ADDRESS, bins=numBins)
-    (chisq, p) = chisquare(n)
 
     # Adjust the subplot dimensions to fit the legend
 
@@ -58,8 +57,10 @@ def CreateHistogram(filename, numBins = 10, yLabel="Run Number", title=""):
     # return the count for each bin
     return n
 
+#Performs a one-sided Chi2 Goodness Of Fit Test
 def Chi2GOF(filename, distribution):
     (chisq, p) = chisquare(distribution)
+
     saveLocation = './' + filename.split('.')[0] + '_chisq.txt'
     f = open(saveLocation, "w")
     f.write('{}\n'.format(distribution))
@@ -67,10 +68,12 @@ def Chi2GOF(filename, distribution):
     f.write("Ha: The data is inconsistent with an equal/constant distribution\n")
     f.write('Chisq: {},'.format(chisq))
     f.write('PValue: {}\n'.format(p))
+
     if ((1-p) > .05):
     	f.write("With an alpha of .05, we reject the null hypothesis.\nIt is unlikely that the data comes from a truly random distribution.\n")
     else:
         f.write("With an alpha of .05, we fail to reject the null hypothesis.\nWe cannot say with certainty whether or not it comes from a truly random distribution.\n")
+
     f.close()
 
 if __name__ == "__main__":
@@ -84,6 +87,6 @@ if __name__ == "__main__":
         distrib = CreateHistogram(sys.argv[1])
         Chi2GOF(sys.argv[1], distrib)
     else:
-        print "Usage: python distrib64.addresses.py decimalData.txt numBins [ylabel] [title]"
+        print "Usage: python distrib64.addresses.py decimalData.txt [numBins] [ylabel] [title]"
 
     
