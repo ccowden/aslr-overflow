@@ -68,10 +68,10 @@ def Chi2GOF(filename, distribution):
 
 if __name__ == "__main__":
     if len(sys.argv) == 5:
-        distrib = CreateHistogram(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4])
+        distrib = CreateHistogram(sys.argv[1], int(sys.argv[2]), sys.argv[3], sys.argv[4])
         Chi2GOF(sys.argv[1], distrib)
     elif len(sys.argv) == 3:
-        distrib = CreateHistogram(sys.argv[1], sys.argv[2])
+        distrib = CreateHistogram(sys.argv[1], int(sys.argv[2]))
         Chi2GOF(sys.argv[1], distrib)
     elif len(sys.argv) == 2:
         distrib = CreateHistogram(sys.argv[1])
