@@ -32,7 +32,7 @@ int main() {
      FILE *fptextvdso  = fopen("textvdsobin.log", "a");
      FILE *fplibsovdso = fopen("libsovdsobin.log", "a");
      FILE *fpheaplibso = fopen("heaplibsobin.log", "a");
-     FILE *fpheapstack = fopen("heapstackbin.log", "a");
+     FILE *fpstackheap = fopen("stackheapbin.log", "a");
 
      char binaddr1[65] = {0};                                                              
      char binaddr2[65] = {0};                                                              
@@ -108,7 +108,7 @@ int main() {
      for(masked = 0x8000000000000000; masked > 0; masked >>=1) 
          strcat(binaddr6, ((entropy_addr & masked) == masked) ? "1" : "0");                   
      binaddr6[65] = '\0';                                                                  
-     fprintf(fpheapstack, "%s\n", binaddr6);                                                   
+     fprintf(fpstackheap, "%s\n", binaddr6);                                                   
 
      ret = munmap(maddr, (size_t)132*1024);
      if (ret == -1 ) {
@@ -121,6 +121,7 @@ int main() {
      fclose(fptextvdso);
      fclose(fplibsovdso);
      fclose(fpheaplibso);
+     fclose(fpstackheap);
                                                                                            
      return 0;                                                                             
 } 
