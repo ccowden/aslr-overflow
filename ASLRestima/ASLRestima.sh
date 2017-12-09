@@ -1,29 +1,11 @@
 #!/bin/bash
 
-######################## SET UP ########################
-declare -a types=("heap" "text" "stack" "mmap" "vdso" "libso")
-declare -A capitalTypes=( ["heap"]="Heap" ["text"]="Text" ["stack"]="Stack" ["mmap"]="Mmap" ["vdso"]="Vdso" ["libso"]="Libso" )
-declare -A startPos=( ["heap"]=16 ["text"]=16 ["stack"]=24 ["mmap"]=17 ["vdso"]=24 ["libso"]=17 )
-declare -A lengths=( ["heap"]=30 ["text"]=30 ["stack"]=30 ["mmap"]=29 ["vdso"]=22 ["libso"]=29 ) 
+######################## Source the config file ########################
+. ./ASLRestima.config
 
-echo "Usage: ./plotEverything.sh [OperatingSystem] [numberOfBins]"
-
-######################## ACCEPT ARGUMENTS ########################
-if [ -z "$1" ]; then
-    OPSYSTEM="Debian"
-else
-    OPSYSTEM=$1
-fi
-
-if [ -z "$2" ]; then
-    NUMBEROFBINS="20"
-else
-    NUMBEROFBINS=$2
-fi
-
-######################## BUILD WHAT IS REQUIRED ########################
+######################## Build memory segments ########################
 echo "Building all memory segments..."
-make -f Makefile
+make all -f Makefile
 
 echo "Building ENT..."
 cd Ent
@@ -31,27 +13,45 @@ make > /dev/null
 cd ..
 
 echo "*************************************"
-######################## ITERATE THROUGH MEM SEGMENTS ########################
+
+######################## Function to Call a Memory Segment Finder #####################
+function loop_mem_segment() {
+    ulimit -c 0
+    
+    ## $1 is the memory segment the function is applied to.
+    ## Empty file before starting to write to it.
+    > "${logFiles[$1]}"
+
+
+    # Gather $ITERATIONS samples of starting addresses
+    for run in `jot $ITERATIONS 1`
+    do
+        printf \\r$run > /dev/null
+        timeout -s 9 60 "./${findAddress[$1]}" >> "${logFiles[$1]}"
+    done
+}
+
+######################## Loop through Memory Segments ########################
 for i in "${types[@]}"
 do
-    ########## DEFINE VARIABLES ##########
+    ########## Define Variables ##########
     YAXIS="${capitalTypes[$i]}"" Starting Address"
     TITLE="Memory Address Entropy for ""${capitalTypes[$i]}"" - 64 bit ""${OPSYSTEM}"
     FLATTITLE="Flattened ""$TITLE"
     DISTRIBTITLE="Distribution of ""$TITLE"
-    LOGFILE="$i""Log.txt"
-    BASHSCRIPT="$i.sh"
+    LOGFILE=${logFiles[$i]}
     DECIMALFILE="$i""Decimal.txt"
     DECFULLFILE="$i""DecFull.txt"
     BITLENGTH=${lengths[$i]}
     FIRSTBIT=${startPos[$i]}
     ENTFILE="$i""Entropy.txt"
 
-    ########## BUILD LOG/DECIMAL/FULL FILES ##########
+    ########## Build Log/Decimal/Full files ##########
     if [ ! -f "$LOGFILE" ]; then
-        echo "$i: $LOGFILE not found. Running $BASHSCRIPT to create it."
-        ./$BASHSCRIPT $LOGFILE > /dev/null
+        echo "$i: $LOGFILE not found. Creating it for you."
+        loop_mem_segment $i
     fi
+
     if [ ! -f "$DECIMALFILE" ]; then
         echo "$i: $DECIMALFILE not found. Running binaryToDec64.sh to create it."
         ./binaryToDec64.sh "$LOGFILE" > "$DECIMALFILE"
@@ -62,13 +62,13 @@ do
         ./binaryToDecFull.sh $LOGFILE > $DECFULLFILE
     fi
 
-    ########## EXECUTE PYTHON SCRIPTS FOR PLOTTING ##########
+    ########## Execute Python scripts for plotting ##########
     python plot64.addresses.py "$DECIMALFILE" "$YAXIS" "$TITLE"
     python flatten64.addresses.py "$DECIMALFILE" "$YAXIS" "$FLATTITLE"
     python distrib64.addresses.py "$DECFULLFILE" "$NUMBEROFBINS" "COUNT" "$DISTRIBTITLE"
     echo "$i: Finished creating plots."
 
-    ########## RUN THE ENT STATISTICS ##########
+    ########## Run the ENT Statistics ##########
     echo "$i: Finished evaluating entropy for $BITLENGTH bits starting at bit $FIRSTBIT."
     while read line 
     do
@@ -79,7 +79,7 @@ do
 
     echo "$i: Finished measuring entropy statistics."
 
-    ########## CLEAN UP ##########
+    ########## Clean up ##########
     rm temp.txt
 
     echo "$i: Finished running script."
