@@ -59,34 +59,32 @@ def CreateHistogram(filename, suppressPlots, numBins = 20, yLabel="Run Number", 
     return n
 
 #Performs a one-sided Chi2 Goodness Of Fit Test
-def Chi2GOF(filename, distribution):
+def Chi2GOF(distribution):
     (chisq, p) = chisquare(distribution)
 
-    saveLocation = './' + filename.split('.')[0] + '_chisq.txt'
-    f = open(saveLocation, "w")
-    f.write('{}\n'.format(distribution))
-    f.write("H0: The data is consistent with an equal/constant distribution\n")
-    f.write("Ha: The data is inconsistent with an equal/constant distribution\n")
-    f.write('Chisq: {},'.format(chisq))
-    f.write('PValue: {}\n'.format(p))
+    print "Chi Square Goodness of Fit Analysis"
+    print 'Entries per bin: {}'.format(distribution)
+    print "H0: The data is consistent with an equal/constant distribution"
+    print "Ha: The data is inconsistent with an equal/constant distribution"
+    print 'Chisq statistic: {},'.format(chisq)
+    print 'PValue: {}\n'.format(p)
 
     if ((1-p) > .05):
-    	f.write("With an alpha of .05, we reject the null hypothesis.\nIt is unlikely that the data comes from a truly random distribution.\n")
+    	print "With an alpha of .05, we would reject the null hypothesis.\nIt is unlikely that the data comes from a truly random distribution.\n"
     else:
-        f.write("With an alpha of .05, we fail to reject the null hypothesis.\nWe cannot say with certainty whether or not it comes from a truly random distribution.\n")
+        print "With an alpha of .05, we would fail to reject the null hypothesis.\nWe cannot say with certainty whether or not it comes from a truly random distribution.\n\n"
 
-    f.close()
 
 if __name__ == "__main__":
     if len(sys.argv) == 6:
         distrib = CreateHistogram(sys.argv[1], bool(sys.argv[2]), int(sys.argv[3]), sys.argv[4], sys.argv[5])
-        Chi2GOF(sys.argv[1], distrib)
+        Chi2GOF(distrib)
     elif len(sys.argv) == 4:
         distrib = CreateHistogram(sys.argv[1], bool(sys.argv[2]), int(sys.argv[3]))
-        Chi2GOF(sys.argv[1], distrib)
+        Chi2GOF(distrib)
     elif len(sys.argv) == 3:
         distrib = CreateHistogram(sys.argv[1], bool(sys.argv[2]))
-        Chi2GOF(sys.argv[1], distrib)
+        Chi2GOF(distrib)
     else:
         print "Usage: python distrib64.addresses.py decimalData.txt suppressPlots [numBins] [ylabel] [title]"
 

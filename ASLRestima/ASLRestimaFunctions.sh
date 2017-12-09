@@ -1,6 +1,9 @@
 #!/bin/bash
 
-######################## Function to Call a Memory Segment Finder #####################
+# Collection of functions called from ASLRestima.sh. 
+# Utilizes variables created in ASLRestima.config
+
+######################## Function to call a memory segment finder #####################
 function loop_mem_segment() {
     trap "" 15
     ulimit -c 0
@@ -17,7 +20,40 @@ function loop_mem_segment() {
     done
 }
 
-######################## Function to Convert Binary Addresses to Decimal #####################
+
+######################## Function to call the offset entropy calculator #####################
+function calculateOffsetEntropy() {
+    for run in `jot $ITERATIONS 1`
+    do
+        #printf \\r$run
+       ./co_entropy 
+    done
+    export LOG="./texttextbin.log"
+    printf "\nTEXT to TEXT   -> "
+    ./entropy64  $LOG
+
+    export LOG="./textlibsobin.log"
+    printf "TEXT to LIBSO  -> "
+    ./entropy64  $LOG
+
+    export LOG="./textvdsobin.log"
+    printf "TEXT to VDSO   -> "
+    ./entropy64  $LOG
+
+    export LOG="./heaplibsobin.log"
+    printf "HEAP to LIBSO  -> "
+    ./entropy64  $LOG
+
+    export LOG="./libsovdsobin.log"
+    printf "LIBSO  to VDSO -> "
+    ./entropy64  $LOG
+
+    export LOG="./heapstackbin.log"
+    printf "HEAP  to STACK -> "
+    ./entropy64 $LOG
+}
+
+######################## Function to convert binary addresses to decimal #####################
 function binaryToDec64() {
     line1=""
     line2=""
@@ -58,6 +94,7 @@ function binaryToDec64() {
 }
 
 
+######################## Function to convert binary addresses to decimal, in one go #####################
 function binaryToDecFull() {
     local line1=""
     while read line
@@ -68,3 +105,4 @@ function binaryToDecFull() {
     echo "${1:8}"
     echo "${line1:1}"
 }
+

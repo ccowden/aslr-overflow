@@ -17,4 +17,4 @@ clean:
 	rm -f *.o text_entropy stack_entropy heap_entropy mmap_entropy mmaplarge_entropy libso_entropy vdso_entropy entropy64 co_entropy
 
 superclean:
-	rm -f *.o *.png *.txt text_entropy stack_entropy heap_entropy mmap_entropy mmaplarge_entropy libso_entropy vdso_entropy entropy64 co_entropy
+	rm -f *.o *.png *.txt *.log text_entropy stack_entropy heap_entropy mmap_entropy mmaplarge_entropy libso_entropy vdso_entropy entropy64 co_entropy

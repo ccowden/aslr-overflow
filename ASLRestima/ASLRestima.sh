@@ -10,7 +10,7 @@ LOG=$LOGFILENAME
 REPORT=$REPORTFILENAME
 echo "Initiating ASLRestima" > $LOG
 echo "" >> $LOG
-echo "================= ASLRestima Report =================" > $REPORT
+echo "======================= ASLRestima Report =======================" > $REPORT
 echo "Performing calculations on $ITERATIONS iterations for all memory segments." >> $REPORT
 echo "" >> $REPORT
 
@@ -32,9 +32,13 @@ echo "Successfully built required files" >> $LOG
 echo "" >> $LOG
 
 ######################## Loop through Memory Segments ########################
+echo "***** Section 1: Calculating # of bits with entropy for each memory segment *****" >> $REPORT
+echo "" >> $REPORT
+
 for i in "${types[@]}"
 do
     echo "Examining the $i"
+    echo "" >> $REPORT
     echo "$i:" >> $REPORT
 
     ########## Define Variables ##########
@@ -82,7 +86,7 @@ do
     python flatten64.addresses.py "$DECIMALFILE" "$SUPPRESSPLOTS" "$YAXIS" "$FLATTITLE"
 
     echo "$i: Creating histogram to illustrate distribution of addresses" >> $LOG
-    python distrib64.addresses.py "$DECFULLFILE" "$SUPPRESSPLOTS" "$NUMBEROFBINS" "COUNT" "$DISTRIBTITLE"
+    python distrib64.addresses.py "$DECFULLFILE" "$SUPPRESSPLOTS" "$NUMBEROFBINS" "COUNT" "$DISTRIBTITLE" >> $REPORT
 
     echo "$i: Successfully created all 3 plots" >> $LOG
 
@@ -102,13 +106,24 @@ do
 
     echo "$i: Finished measuring entropy statistics." >> $LOG
 
-    ########## Clean up ##########
     rm temp.txt
 
     echo "$i: Successfully completed all operations" >> $LOG
     echo "" >> $LOG
     echo "" >> $REPORT
 done
+
+
+######################## Calculate entropy of offset between segments ########################
+echo "Calculating entropy of offset between segments"
+echo "Calculating entropy of offset between segments" >> $LOG
+echo "" >> $LOG
+
+echo "" >> $REPORT
+echo "***** Section 2: Calculating # of bits of entropy between 2 memory segments *****" >> $REPORT
+
+calculateOffsetEntropy >> $REPORT
+
 
 ######################## Clean up, if requested ########################
 if [ "$CLEANUP" = true ]; then
