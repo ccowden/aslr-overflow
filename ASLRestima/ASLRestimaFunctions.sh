@@ -51,6 +51,14 @@ function calculateOffsetEntropy() {
     export LOG="./heapstackbin.log"
     printf "HEAP  to STACK -> "
     ./entropy64 $LOG
+
+    export LOG="./stackvdsobin.log"
+    printf "STACK to VDSO -> "
+    ./entropy64 $LOG
+
+    export LOG="./textheapbin.log"
+    printf "TEXT to HEAP -> "
+    ./entropy64 $LOG
 }
 
 ######################## Function to convert binary addresses to decimal #####################

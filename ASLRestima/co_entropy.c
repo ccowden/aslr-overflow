@@ -34,6 +34,7 @@ int main() {
      FILE *fpheaplibso = fopen("heaplibsobin.log", "a");
      FILE *fpheapstack = fopen("heapstackbin.log", "a");
      FILE *fpstackvdso = fopen("stackvdsobin.log", "a");
+     FILE *fptextheap  = fopen("textheapbin.log", "a");
 
      char binaddr1[65] = {0};                                                              
      char binaddr2[65] = {0};                                                              
@@ -42,6 +43,7 @@ int main() {
      char binaddr5[65] = {0};                                                              
      char binaddr6[65] = {0};                                                              
      char binaddr7[65] = {0};                                                              
+     char binaddr8[65] = {0};                                                              
      unsigned long long entropy_addr;
      unsigned long long stackvar = 42;
      unsigned long long *haddr = NULL;
@@ -118,6 +120,12 @@ int main() {
      binaddr7[65] = '\0';                                                                  
      fprintf(fpstackvdso, "%s\n", binaddr7);                                                   
 
+     entropy_addr =  heapaddr - textaddr;
+     for(masked = 0x8000000000000000; masked > 0; masked >>=1) 
+         strcat(binaddr8, ((entropy_addr & masked) == masked) ? "1" : "0");                   
+     binaddr8[65] = '\0';                                                                  
+     fprintf(fptextheap, "%s\n", binaddr8);                                                   
+
      ret = munmap(maddr, (size_t)132*1024);
      if (ret == -1 ) {
         printf("munmap failed. Exiting the process\n");
@@ -131,6 +139,7 @@ int main() {
      fclose(fpheaplibso);
      fclose(fpheapstack);
      fclose(fpstackvdso);
+     fclose(fptextheap);
                                                                                            
      return 0;                                                                             
 } 
