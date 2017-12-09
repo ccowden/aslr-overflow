@@ -7,8 +7,8 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 from matplotlib.font_manager import FontProperties
 
-if len(sys.argv) != 4:
-    print "Usage: python plot64.addresses.py decimalData [yLabel] [title]"
+if len(sys.argv) != 5:
+    print "Usage: python plot64.addresses.py decimalData suppressPlots [yLabel] [title]"
 
 # Collect the data from the given file
 with open (sys.argv[1], "r") as data:
@@ -62,16 +62,17 @@ xLabel = 'Server Run Number'
 yLabel = 'hidden() Memory Address'
 title = 'Memory Address Entropy for %s'%(Title)
 
-if (len(sys.argv) == 4):
-  yLabel = sys.argv[2]
-  title = sys.argv[3]
+if (len(sys.argv) == 5):
+  yLabel = sys.argv[3]
+  title = sys.argv[4]
 
 plt.xlabel(xLabel)
 plt.ylabel(yLabel)
 plt.title(title)
 
-saveLocation = './' + sys.argv[1].split('.')[0] + '.png'
+saveLocation = './graphs/' + sys.argv[1].split('.')[0] + '.png'
 
 plt.savefig(saveLocation, bbox_inches='tight')
 
-#plt.show()
+if (sys.argv[2] == False):
+    plt.show()

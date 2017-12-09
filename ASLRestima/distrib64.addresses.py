@@ -9,7 +9,7 @@ from matplotlib.ticker import FormatStrFormatter
 from matplotlib.font_manager import FontProperties
 from scipy.stats import chisquare
 
-def CreateHistogram(filename, numBins = 20, yLabel="Run Number", title=""):
+def CreateHistogram(filename, suppressPlots, numBins = 20, yLabel="Run Number", title=""):
     # Collect the data from the given file
     with open (filename, "r") as data:
         Title=data.readline()
@@ -48,11 +48,12 @@ def CreateHistogram(filename, numBins = 20, yLabel="Run Number", title=""):
     plt.ylabel(yLabel)
     plt.title(title)
 
-    saveLocation = './' + filename.split('.')[0] + '_distribution.png'
+    saveLocation = './graphs/' + filename.split('.')[0] + '_distribution.png'
 
     plt.savefig(saveLocation, bbox_inches='tight')
 
-    #plt.show()
+    if (suppressPlots == False):
+         plt.show()
 
     # return the count for each bin
     return n
@@ -77,16 +78,16 @@ def Chi2GOF(filename, distribution):
     f.close()
 
 if __name__ == "__main__":
-    if len(sys.argv) == 5:
-        distrib = CreateHistogram(sys.argv[1], int(sys.argv[2]), sys.argv[3], sys.argv[4])
+    if len(sys.argv) == 6:
+        distrib = CreateHistogram(sys.argv[1], bool(sys.argv[2]), int(sys.argv[3]), sys.argv[4], sys.argv[5])
+        Chi2GOF(sys.argv[1], distrib)
+    elif len(sys.argv) == 4:
+        distrib = CreateHistogram(sys.argv[1], bool(sys.argv[2]), int(sys.argv[3]))
         Chi2GOF(sys.argv[1], distrib)
     elif len(sys.argv) == 3:
-        distrib = CreateHistogram(sys.argv[1], int(sys.argv[2]))
-        Chi2GOF(sys.argv[1], distrib)
-    elif len(sys.argv) == 2:
-        distrib = CreateHistogram(sys.argv[1])
+        distrib = CreateHistogram(sys.argv[1], bool(sys.argv[2]))
         Chi2GOF(sys.argv[1], distrib)
     else:
-        print "Usage: python distrib64.addresses.py decimalData.txt [numBins] [ylabel] [title]"
+        print "Usage: python distrib64.addresses.py decimalData.txt suppressPlots [numBins] [ylabel] [title]"
 
     

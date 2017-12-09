@@ -7,8 +7,8 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 from matplotlib.font_manager import FontProperties
 
-if len(sys.argv) != 4:
-    print "Usage: python flatten64.addresses.py decimalData [yLabel] [title]"
+if len(sys.argv) != 5:
+    print "Usage: python flatten64.addresses.py decimalData suppressPlots [yLabel] [title]"
     print len(sys.argv)
 
 # Collect the data from the given file
@@ -62,9 +62,9 @@ xLabel = 'Server Run Number'
 yLabel = 'hidden() Memory Address'
 title = 'Memory Address Entropy for Flattened %s'%(Title)
 
-if (len(sys.argv) == 4):
-  yLabel = sys.argv[2]
-  title = sys.argv[3]
+if (len(sys.argv) == 5):
+  yLabel = sys.argv[3]
+  title = sys.argv[4]
 
 plt.xlabel(xLabel)
 plt.ylabel(yLabel)
@@ -72,8 +72,9 @@ plt.title(title)
 
 fileName = sys.argv[1].replace("addresses", "flattened");
 
-saveLocation = './' + fileName.split('.')[0] + '_flattened.png'
+saveLocation = './graphs/' + fileName.split('.')[0] + '_flattened.png'
 
 plt.savefig(saveLocation, bbox_inches='tight')
 
-#plt.show()
+if (sys.argv[2] == False):
+    plt.show()

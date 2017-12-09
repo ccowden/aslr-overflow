@@ -22,7 +22,6 @@ function loop_mem_segment() {
     ## Empty file before starting to write to it.
     > "${logFiles[$1]}"
 
-
     # Gather $ITERATIONS samples of starting addresses
     for run in `jot $ITERATIONS 1`
     do
@@ -63,9 +62,13 @@ do
     fi
 
     ########## Execute Python scripts for plotting ##########
-    python plot64.addresses.py "$DECIMALFILE" "$YAXIS" "$TITLE"
-    python flatten64.addresses.py "$DECIMALFILE" "$YAXIS" "$FLATTITLE"
-    python distrib64.addresses.py "$DECFULLFILE" "$NUMBEROFBINS" "COUNT" "$DISTRIBTITLE"
+    if [ ! -d "graphs" ]; then
+        mkdir "graphs"
+    fi
+
+    python plot64.addresses.py "$DECIMALFILE" "$SUPPRESSPLOTS" "$YAXIS" "$TITLE"
+    python flatten64.addresses.py "$DECIMALFILE" "$SUPPRESSPLOTS" "$YAXIS" "$FLATTITLE"
+    python distrib64.addresses.py "$DECFULLFILE" "$SUPPRESSPLOTS" "$NUMBEROFBINS" "COUNT" "$DISTRIBTITLE"
     echo "$i: Finished creating plots."
 
     ########## Run the ENT Statistics ##########
