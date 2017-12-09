@@ -32,7 +32,8 @@ int main() {
      FILE *fptextvdso  = fopen("textvdsobin.log", "a");
      FILE *fplibsovdso = fopen("libsovdsobin.log", "a");
      FILE *fpheaplibso = fopen("heaplibsobin.log", "a");
-     FILE *fpstackheap = fopen("stackheapbin.log", "a");
+     FILE *fpheapstack = fopen("heapstackbin.log", "a");
+     FILE *fpstackvdso = fopen("stackvdsobin.log", "a");
 
      char binaddr1[65] = {0};                                                              
      char binaddr2[65] = {0};                                                              
@@ -40,6 +41,7 @@ int main() {
      char binaddr4[65] = {0};                                                              
      char binaddr5[65] = {0};                                                              
      char binaddr6[65] = {0};                                                              
+     char binaddr7[65] = {0};                                                              
      unsigned long long entropy_addr;
      unsigned long long stackvar = 42;
      unsigned long long *haddr = NULL;
@@ -86,29 +88,35 @@ int main() {
      binaddr2[65] = '\0';
      fprintf(fptexttext, "%s\n", binaddr2);                                                   
 
-     entropy_addr =  textaddr - vdsoaddr;
+     entropy_addr =  vdsoaddr - textaddr;
      for(masked = 0x8000000000000000; masked > 0; masked >>=1) 
          strcat(binaddr3, ((entropy_addr & masked) == masked) ? "1" : "0");                   
      binaddr3[65] = '\0';                                                                  
      fprintf(fptextvdso, "%s\n", binaddr3);                                                   
 
-     entropy_addr =  libsoaddr - vdsoaddr;
+     entropy_addr =  vdsoaddr - libsoaddr;
      for(masked = 0x8000000000000000; masked > 0; masked >>=1) 
          strcat(binaddr4, ((entropy_addr & masked) == masked) ? "1" : "0");                   
      binaddr4[65] = '\0';                                                                  
      fprintf(fplibsovdso, "%s\n", binaddr4);                                                   
 
-     entropy_addr =  heapaddr - libsoaddr;
+     entropy_addr =  libsoaddr - heapaddr;
      for(masked = 0x8000000000000000; masked > 0; masked >>=1) 
          strcat(binaddr5, ((entropy_addr & masked) == masked) ? "1" : "0");                   
      binaddr5[65] = '\0';                                                                  
      fprintf(fpheaplibso, "%s\n", binaddr5);                                                   
 
-     entropy_addr =  heapaddr - stackaddr;
+     entropy_addr = stackaddr - heapaddr;
      for(masked = 0x8000000000000000; masked > 0; masked >>=1) 
          strcat(binaddr6, ((entropy_addr & masked) == masked) ? "1" : "0");                   
      binaddr6[65] = '\0';                                                                  
-     fprintf(fpstackheap, "%s\n", binaddr6);                                                   
+     fprintf(fpheapstack, "%s\n", binaddr6);                                                   
+
+     entropy_addr =  vdsoaddr - stackaddr;
+     for(masked = 0x8000000000000000; masked > 0; masked >>=1) 
+         strcat(binaddr7, ((entropy_addr & masked) == masked) ? "1" : "0");                   
+     binaddr7[65] = '\0';                                                                  
+     fprintf(fpstackvdso, "%s\n", binaddr7);                                                   
 
      ret = munmap(maddr, (size_t)132*1024);
      if (ret == -1 ) {
@@ -121,7 +129,8 @@ int main() {
      fclose(fptextvdso);
      fclose(fplibsovdso);
      fclose(fpheaplibso);
-     fclose(fpstackheap);
+     fclose(fpheapstack);
+     fclose(fpstackvdso);
                                                                                            
      return 0;                                                                             
 } 
