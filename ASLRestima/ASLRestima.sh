@@ -5,9 +5,14 @@ echo "Welcome to ASLRestima. Beginning computations..."
 
 ######################## Source the config file ########################
 . ./ASLRestima.config
+. ./ASLRestimaFunctions.sh
 LOG=$LOGFILENAME
 REPORT=$REPORTFILENAME
 echo "Initiating ASLRestima" > $LOG
+echo "" >> $LOG
+echo "================= ASLRestima Report =================" > $REPORT
+echo "Performing calculations on $ITERATIONS iterations for all memory segments." >> $REPORT
+echo "" >> $REPORT
 
 ######################## Clean up, if requested ########################
 if [ "$CLEANUP" = true ]; then
@@ -26,26 +31,11 @@ cd ..
 echo "Successfully built required files" >> $LOG
 echo "" >> $LOG
 
-######################## Function to Call a Memory Segment Finder #####################
-function loop_mem_segment() {
-    ulimit -c 0
-    
-    ## $1 is the memory segment the function is applied to.
-    ## Empty file before starting to write to it.
-    > "${binaryFiles[$1]}"
-
-    # Gather $ITERATIONS samples of starting addresses
-    for run in `jot $ITERATIONS 1`
-    do
-        printf \\r$run > /dev/null
-        timeout -s 9 60 "./${findAddress[$1]}" >> "${binaryFiles[$1]}"
-    done
-}
-
 ######################## Loop through Memory Segments ########################
 for i in "${types[@]}"
 do
     echo "Examining the $i"
+    echo "$i:" >> $REPORT
 
     ########## Define Variables ##########
     YAXIS="${capitalTypes[$i]}"" Starting Address"
@@ -66,13 +56,13 @@ do
     fi
 
     if [ ! -f "$DECIMALFILE" ]; then
-        echo "$i: Running binaryToDec64.sh to create $DECIMALFILE" >> $LOG
-        ./binaryToDec64.sh "$BINARYFILE" > "$DECIMALFILE"
+        echo "$i: Creating $DECIMALFILE" >> $LOG
+        binaryToDec64 "$BINARYFILE" > "$DECIMALFILE"
     fi
 
     if [ ! -f "$DECFULLFILE" ]; then
-        echo "$i: Running binaryToDecFull.sh to create $DECFULLFILE" >> $LOG
-        ./binaryToDecFull.sh $BINARYFILE > $DECFULLFILE
+        echo "$i: Creating $DECFULLFILE" >> $LOG
+        binaryToDecFull $BINARYFILE > $DECFULLFILE
     fi
 
     echo "$i: Successfully gathered $ITERATIONS starting addresses." >> $LOG
@@ -96,6 +86,11 @@ do
 
     echo "$i: Successfully created all 3 plots" >> $LOG
 
+    ########## Calculating number of bits of entropy ########
+    echo "$i: Calculating number of bits of entropy" >> $LOG
+    ./entropy64 $BINARYFILE >> $REPORT
+
+
     ########## Run the ENT Statistics ##########
     echo "$i: Finished evaluating entropy for $BITLENGTH bits starting at bit $FIRSTBIT." >> $LOG
     while read line 
@@ -112,6 +107,7 @@ do
 
     echo "$i: Successfully completed all operations" >> $LOG
     echo "" >> $LOG
+    echo "" >> $REPORT
 done
 
 ######################## Clean up, if requested ########################

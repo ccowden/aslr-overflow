@@ -36,7 +36,6 @@ int main(int argc, char* argv[]) {
   } // if the file contains a line
 
   fclose(addressFile);
-  printf("%s\n", counter); // print out which bits change
 
   for(i = 0; i < 64; i++) {
     if (counter[i] == '1') {
@@ -45,6 +44,7 @@ int main(int argc, char* argv[]) {
   } // count the number of bits that changed
 
   printf("%d bits of entropy\n", bits);
+  printf("%s\n", counter); // print out which bits change
 
   return 0;
 } // main()
