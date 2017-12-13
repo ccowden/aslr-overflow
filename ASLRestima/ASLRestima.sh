@@ -125,6 +125,25 @@ echo "***** Section 2: Calculating # of bits of entropy between 2 memory segment
 calculateOffsetEntropy >> $REPORT
 
 
+######################## Read mmap_rnd_bits, compare to maximum ########################
+echo "Determining if mmap_rnd_bits is optimal"
+echo "Determining if mmap_rnd_bits is optimal" >> $LOG
+echo "" >> $LOG
+
+echo "" >> $REPORT
+echo "***** Section 3: Determining if mmap_rnd_bits is optimal *****" >> $REPORT
+echo "" >> $REPORT
+
+RND_BITS="$(cat /proc/sys/vm/mmap_rnd_bits)"
+echo "Your mmap_rnd_bits is set to: $RND_BITS" >> $REPORT
+echo "The maximum value is 32 for 64-bit environments." >> $REPORT
+if [ $RND_BITS -eq 32 ]; then
+    echo "Your system is using the maximum value." >> $REPORT
+else
+    echo "Consider increasing your mmap_rnd_bits value." >> $REPORT
+fi
+
+
 ######################## Clean up, if requested ########################
 if [ "$CLEANUP" = true ]; then
     echo "Beginning clean up!" >> $LOG
